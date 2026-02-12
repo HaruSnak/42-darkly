@@ -86,7 +86,7 @@ We successfully identified and documented **14 vulnerabilities** across the appl
 
 - **OWASP**: [Open Web Application Security Project](https://owasp.org/)
 - **HackTheBox / Root-Me**: For training resources.
-- **Tools**: Hydra, Dirb, Burp Suite, Scrapy, SQLMap (for learning, though manual exploitation is preferred).
+- **Tools**: Hydra, Dirb, Burp Suite, Scrapy (for learning, though manual exploitation is preferred).
 
 ### 📄 License
 
@@ -167,7 +167,7 @@ Nous avons identifié et documenté avec succès **14 vulnérabilités** sur l'a
 
 - **OWASP** : [Open Web Application Security Project](https://owasp.org/)
 - **HackTheBox / Root-Me** : Pour les ressources d'entraînement.
-- **Outils** : Hydra, Dirb, Burp Suite, Scrapy, SQLMap.
+- **Outils** : Hydra, Dirb, Burp Suite, Scrapy.
 
 ### 📄 Licence
 
