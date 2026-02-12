@@ -1,0 +1,37 @@
+📖 Définition
+
+Le fichier **robots.txt** est un standard utilisé par les sites web pour communiquer avec les robots d'indexation (crawlers). Il spécifie quelles zones du site ne doivent pas être traitées ou scannées. Cependant, comme ce fichier est accessible publiquement et que ses directives sont volontaires, il peut involontairement révéler l'emplacement de répertoires sensibles ou cachés aux attaquants.
+
+La **divulgation d'informations sensibles** via `robots.txt` se produit lorsqu'un administrateur liste des répertoires privés ou cachés dans le fichier `robots.txt` pour empêcher les moteurs de recherche de les indexer. Bien que cela arrête les robots honnêtes, cela sert de carte pour les attaquants afin de trouver du contenu caché qui pourrait ne pas être correctement sécurisé.
+
+📖 Approche
+
+J'ai vérifié `http://X.X.X.X/robots.txt` et j'ai trouvé une entrée interdite : `/.hidden`. L'accès à ce répertoire a révélé une structure massive de sous-répertoires et de fichiers imbriqués, rendant l'exploration manuelle impossible.
+
+Pour automatiser la recherche, j'ai utilisé **Scrapy**, un framework Python pour le web crawling. J'ai écrit un spider pour parcourir récursivement la structure des répertoires et lire le contenu de tous les fichiers `README` trouvés, jusqu'à découvrir le flag.
+
+**Commande utilisée :**
+
+```bash
+scrapy runspider spider_darkly.py -o output.json
+```
+
+**Concept de `spider_darkly.py` :**
+Un script qui suit les liens récursivement et vérifie la présence du flag dans le contenu des fichiers.
+
+[
+{"flag": "Hey, here is your flag : d5eec3ec36cf80dce44a896f961c1831a05526ec215693c8f2c39543497d4466", "url": "http://X.X.X.X/.hidden/whtccjokayshttvxycsvykxcfm/igeemtxnvexvxezqwntmzjltkt/lmpanswobhwcozdqixbowvbrhw/README"}
+]
+
+**Flag:** `d5eec3ec36cf80dce44a896f961c1831a05526ec215693c8f2c39543497d4466`
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **La sécurité par l'obscurité n'est pas de la sécurité** : Ne pas compter sur des noms de dossiers cachés ou `robots.txt` pour sécuriser le contenu.
+- **Contrôle d'accès** : Utiliser une authentification appropriée (.htaccess, permissions) pour restreindre l'accès aux répertoires internes.
+- **Ne pas lister les chemins sensibles** : Éviter de lister des chemins sensibles dans `robots.txt`.
+
+🔗 Sources
+
+- [Documentation Scrapy](https://docs.scrapy.org/en/latest/topics/spiders.html)

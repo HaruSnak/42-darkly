@@ -1,0 +1,36 @@
+📖 Définition
+
+Le **Brute Force** (ou attaque par force brute) est une méthode d'attaque qui consiste à vérifier systématiquement toutes les combinaisons possibles de mots de passe ou de clés jusqu'à trouver la bonne. Dans un contexte web, cela signifie souvent tenter de deviner le mot de passe d'un utilisateur en automatisant les essais avec une liste de mots de passe courants.
+
+📖 Approche
+
+Pour cette faille, j'ai d'abord cherché des indices sur le site manuellement, sans succès. J'ai alors décidé de tester une attaque par force brute. J'ai utilisé **Hydra**, un outil populaire pour le cassage de mots de passe, avec une liste de mots de passe provenant de la communauté Kaggle (merci à eux !).
+
+J'ai rencontré quelques difficultés en réalisant que je devais utiliser une requête GET au lieu de POST, et en configurant correctement les paramètres de l'attaque. Après avoir corrigé ma commande pour utiliser `http-get-form` et spécifié le bon message d'erreur pour identifier les échecs, j'ai réussi à trouver le mot de passe.
+
+**Commande utilisée :**
+
+```bash
+hydra -f -l admin -P /home/haru/dev/rockyou.txt X.X.X.X http-get-form "/index.php:page=signin&username=^USER^&password=^PASS^&Login=Login:F=WrongAnswer"
+```
+
+**Explication :**
+- `-f`: S'arrête dès qu'un résultat est trouvé.
+- `-l admin`: Cible l'utilisateur 'admin'.
+- `-P ...`: Chemin vers la liste de mots de passe (rockyou.txt).
+- `http-get-form`: La méthode utilisée par le formulaire.
+- `"...:F=WrongAnswer"`: Les paramètres et la chaîne de caractères indiquant un échec de connexion.
+
+**Flag :** `b3a6e43ddf8b4bbb4125e5e7d23040433827759d4de1c04ea63907479a80a6b2`
+
+🛡️ Remédiation
+
+Pour se prémunir des attaques Brute Force :
+- **Limitation de débit (Rate Limiting)** : Limiter le nombre de tentatives de connexion depuis une même IP (via Fail2Ban ou Nginx).
+- **Verrouillage de compte** : Bloquer le compte après un certain nombre d'échecs.
+- **CAPTCHA** : Mettre en place un CAPTCHA pour empêcher les robots de soumettre le formulaire.
+
+🔗 Sources
+
+- [THC-Hydra GitHub](https://github.com/vanhauser-thc/thc-hydra)
+- [Rockyou.txt (Kaggle)](https://www.kaggle.com/datasets/wjburns/common-password-list-rockyoutxt)

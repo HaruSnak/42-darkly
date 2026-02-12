@@ -1,0 +1,25 @@
+### 📖 Définition
+
+Les failles de **gestion logique non sécurisée** (Insecure Logic Handling) surviennent lorsque la logique interne d'une application est défaillante, permettant à un attaquant de manipuler le flux de travail ou le traitement des données de manière inattendue. Cela peut se produire lorsque l'application ne valide pas correctement les contraintes d'entrée ou gère mal des cas limites spécifiques, entraînant une divulgation d'informations.
+
+### 📖 Approche
+
+Cette faille se trouvait dans le formulaire "Feedback". J'ai tenté au début de faire une stored XSS, puis en bidouillant en boucle dans les formulaires du feedback, je me suis rendu compte qu'en mettant uniquement une seule lettre dans le champ "Name", le flag apparait.
+
+L'application semble échouer à gérer correctement ce cas limite, déclenchant l'affichage du flag au lieu d'un message d'erreur ou d'un comportement standard.
+
+**Payload utilisé :**
+Une seule lettre dans le champ `Name` (ex: `a`).
+
+**Flag :** `0fbb54bbf7d099713ca4be297e1bc7da0173d8b3c21c1811b916a3a86652724e`
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **Validation des entrées** : Appliquer des règles strictes de validation (longueur minimale et maximale, caractères autorisés).
+- **Gestion sécurisée des erreurs** : S'assurer que les cas limites (comme les entrées très courtes) ne révèlent pas d'informations sensibles.
+- **Revue de code** : Vérifier la logique métier pour s'assurer qu'aucune combinaison d'entrées spécifique ne déclenche des chemins de débogage ou des fuites d'informations.
+
+🔗 Sources
+
+- [OWASP - Cross Site Scripting (XSS)](https://owasp.org/www-community/attacks/xss/)

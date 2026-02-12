@@ -1,0 +1,28 @@
+📖 Définition
+
+Le **contournement de sécurité client** (Client-Side Security Bypass) est une vulnérabilité où les contrôles de sécurité sont implémentés uniquement côté client (front-end), par exemple en HTML ou JavaScript. Comme le code côté client est entièrement contrôlable par l'utilisateur, ces contrôles peuvent être contournés trivialement en modifiant la source de la page ou en interceptant la requête.
+
+📖 Approche
+
+Pour cette faille, la page de récupération de mot de passe me semblait suspecte, avec seulement une image et un bouton. J'ai inspecté le code HTML de la page et j'ai remarqué que le formulaire contenait un champ `input` caché (`type="hidden"`).
+
+En modifiant le code HTML pour enlever l'attribut `hidden` (CTRL + U ou Inspecter l'élément), j'ai rendu le champ visible. J'ai entré une valeur au hasard et j'ai soumis le formulaire. Cela a permis de valider la requête et de récupérer le flag.
+
+**Méthode :**
+1. Ouvrir les outils de développement (F12 ou Ctrl+Maj+I).
+2. Inspecter l'élément formulaire.
+3. Trouver `<input type="hidden" ...>`.
+4. Changer `type="hidden"` en `type="text"` ou supprimer l'attribut.
+5. Entrer une valeur et soumettre.
+
+**Flag :** `1d4855f7337c0c14b6f44946872c4eb33853f40b2d54393fbe94f49f1e19bbb0`
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **Validation côté serveur** : Ne jamais faire confiance aux vérifications côté client. Toujours valider toutes les données reçues sur le serveur.
+- **Éviter les inputs cachés pour la logique critique** : Ne pas utiliser de champs cachés pour contrôler la sécurité ou la logique métier, car ils sont modifiables par l'utilisateur.
+
+🔗 Sources
+
+- [OWASP - Client-Side Security](https://owasp.org/www-community/attacks/Client-side_Security_Bypass)

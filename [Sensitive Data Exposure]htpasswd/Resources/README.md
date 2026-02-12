@@ -1,0 +1,84 @@
+<div align="center">
+
+# Robots.txt - htpasswd
+### Recovering credentials from exposed system files
+
+</div>
+
+---
+
+## 🇬🇧 English
+
+<details>
+<summary><b>📖 Click to expand/collapse English version</b></summary>
+
+### 📖 Definition
+
+**Sensitive File Exposure** occurs when an application inadvertently exposes sensitive files, such as configuration files, credential dumps (`.htpasswd`), or backup files. **.htpasswd** is an Apache file used to store usernames and passwords (hashed) for basic authentication. Protecting this file is critical as it allows attackers to attempt cracking the hashes.
+
+### 📖 Approach
+
+Access to certain directories revealed an exposed `.htpasswd` file content: `root:437394baff5aa33daa618be47b75cb49`. The password was hashed using MD5.
+
+I used an online hash cracker (CrackStation) to reverse the MD5 hash `437394baff5aa33daa618be47b75cb49`, which yielded the password `qwerty123@`.
+
+I then used `dirb` to find an administrative login page at `/admin`. Using the credentials `root` : `qwerty123@`, I successfully logged in and retrieved the flag.
+
+**Commands used:**
+
+```bash
+dirb http://X.X.X.X -o dirb.log
+```
+
+**Flag:** `d19b4823e0d5600ceed56d5e896ef328d7a2b9e7ac7e80f4fcdb9b10bcb3e7ff`
+
+### 🛡️ Remediation
+
+To prevent this:
+- **Restrict Access**: Ensure `.htpasswd` files are not accessible via web browser. Configure the web server (Apache/Nginx) to deny access to files starting with `.ht`.
+- **Strong Hashing**: Do not use weak hashing algorithms like MD5. Use bcrypt, Argon2, or PBKDF2.
+
+### 🔗 Resources
+
+- [CrackStation](https://crackstation.net/)
+
+</details>
+
+---
+
+## 🇫🇷 Français
+
+<details>
+<summary><b>📖 Cliquez pour développer/réduire la version française</b></summary>
+
+### 📖 Définition
+
+L'**exposition de fichiers sensibles** se produit lorsqu'une application expose par inadvertance des fichiers confidentiels, tels que des fichiers de configuration ou des fichiers de mots de passe (`.htpasswd`). **.htpasswd** est un fichier Apache utilisé pour stocker les noms d'utilisateurs et mots de passe (hachés). Protéger ce fichier est critique.
+
+### 📖 Approche
+
+L'accès à un répertoire a révélé le contenu d'un fichier `.htpasswd` : `root:437394baff5aa33daa618be47b75cb49`. Le mot de passe était haché en MD5.
+
+J'ai utilisé un casseur de hash en ligne (CrackStation) pour inverser le hash MD5 `437394baff5aa33daa618be47b75cb49`, ce qui a donné le mot de passe `qwerty123@`.
+
+J'ai ensuite utilisé `dirb` pour trouver une page de connexion administrative sur `/admin`. En utilisant les identifiants `root` : `qwerty123@`, je me suis connecté et j'ai récupéré le flag.
+
+**Commandes utilisées :**
+
+```bash
+dirb http://X.X.X.X -o dirb.log
+```
+
+**Flag :** `d19b4823e0d5600ceed56d5e896ef328d7a2b9e7ac7e80f4fcdb9b10bcb3e7ff`
+
+### 🛡️ Remédiation
+
+Pour corriger cela :
+- **Restreindre l'accès** : S'assurer que les fichiers `.htpasswd` ne sont pas accessibles via le navigateur.
+- **Hachage fort** : Ne pas utiliser d'algorithmes faibles comme MD5.
+
+### 🔗 Sources
+
+- [CrackStation](https://crackstation.net/)
+
+</details>
