@@ -16,6 +16,14 @@
 
 **Client-Side Security Bypass** is a vulnerability where security controls are implemented only on the client side (front-end), such as in HTML, JavaScript, or hidden form fields. Since the client-side code is fully controllable by the user, these controls can be trivially bypassed by modifying the page source or intercepting the request.
 
+### ⚡ Quick Demo
+
+Go to `?page=recover`, open the DevTools console (F12), run:
+```js
+document.querySelector('input[type=hidden]').type = 'text'
+```
+Type anything in the now-visible field and submit.
+
 ### 📖 Approach
 
 For this vulnerability, the password recovery page seemed suspicious with just an image and a button. I inspected the HTML code (Inspect Element) and noticed a form containing a hidden input field alongside the button.
@@ -39,7 +47,7 @@ To fix this:
 
 ### 🔗 Resources
 
-- [OWASP - Client-Side Security](https://owasp.org/www-community/attacks/Client-side_Security_Bypass)
+- [OWASP - Web Parameter Tampering](https://owasp.org/www-community/attacks/Web_Parameter_Tampering)
 
 </details>
 
@@ -53,6 +61,14 @@ To fix this:
 ### 📖 Définition
 
 Le **contournement de sécurité client** (Client-Side Security Bypass) est une vulnérabilité où les contrôles de sécurité sont implémentés uniquement côté client (front-end), par exemple en HTML ou JavaScript. Comme le code côté client est entièrement contrôlable par l'utilisateur, ces contrôles peuvent être contournés trivialement en modifiant la source de la page ou en interceptant la requête.
+
+### ⚡ Démo rapide
+
+Aller sur `?page=recover`, ouvrir la console DevTools (F12), lancer :
+```js
+document.querySelector('input[type=hidden]').type = 'text'
+```
+Taper n'importe quelle valeur dans le champ devenu visible et soumettre.
 
 ### 📖 Approche
 
@@ -77,6 +93,6 @@ Pour corriger cela :
 
 ### 🔗 Sources
 
-- [OWASP - Client-Side Security](https://owasp.org/www-community/attacks/Client-side_Security_Bypass)
+- [OWASP - Web Parameter Tampering](https://owasp.org/www-community/attacks/Web_Parameter_Tampering)
 
 </details>

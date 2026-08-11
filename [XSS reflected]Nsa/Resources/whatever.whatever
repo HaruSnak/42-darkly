@@ -1,0 +1,49 @@
+📖 Définition
+
+Le **Cross-Site Scripting réfléchi (Reflected XSS)** survient lorsqu'une application reçoit des données dans une requête HTTP et les inclut dans la réponse immédiate de manière non sécurisée. Ici la faille passe par le schéma d'URI `data:` : le navigateur peut interpréter `data:text/html;base64,...` comme un document HTML complet. Si une page réinjecte un paramètre `src` contrôlé par l'utilisateur directement dans une balise que le navigateur va charger (`<iframe>`, `<object>`, etc.), un attaquant peut faire passer tout un payload HTML/JS en contournant des filtres qui ne vérifient que l'extension du fichier ou la présence littérale de `<script>`.
+
+Remarque : depuis 2018, les navigateurs modernes (Chrome, Firefox) **bloquent la navigation de premier niveau** vers une URI `data:` tapée ou cliquée directement dans la barre d'adresse, spécifiquement pour empêcher ce genre d'abus à des fins de phishing. Cette protection ne s'applique pas ici, car la requête de premier niveau du navigateur est une URL `http://` normale (`?page=media&src=...`) ; le serveur intègre la valeur contrôlée par l'attaquant comme *sous-ressource* (par exemple dans un `<iframe src="...">`), ce qui emprunte un chemin de code différent et non restreint.
+
+⚡ Démo rapide
+
+Ouvrir directement dans le navigateur :
+```
+http://X.X.X.X/index.php?page=media&src=data:text/html;base64,PHNjcmlwdD5hbGVydCg0Mik8L3NjcmlwdD4=
+```
+
+📖 Approche
+
+J'ai visité `/index.php?page=media&src=nsa`, une page qui charge une ressource en fonction du paramètre GET `src`. J'ai essayé de contrôler ce paramètre directement — des valeurs comme `media.php` ou d'autres chemins locaux ne fonctionnaient pas, ce qui suggère un filtrage ou que le paramètre n'est pas utilisé comme un simple chemin de fichier.
+
+J'ai alors supposé que la valeur pouvait être réinjectée brute dans une balise HTML capable d'afficher du contenu arbitraire (par exemple un `<iframe src="...">`). Pour tester cela sans déclencher un filtre naïf sur `<script>`, j'ai encodé un payload sous forme d'URI `data:`. J'ai encodé `<script>alert(42)</script>` en base64 :
+
+```bash
+echo -n '<script>alert(42)</script>' | base64
+# PHNjcmlwdD5hbGVydCg0Mik8L3NjcmlwdD4=
+```
+
+J'ai ensuite requêté la page avec cette URI data comme valeur de `src` :
+
+```
+http://X.X.X.X/index.php?page=media&src=data:text/html;base64,PHNjcmlwdD5hbGVydCg0Mik8L3NjcmlwdD4=
+```
+
+Le navigateur a interprété le document HTML décodé, exécuté la balise `<script>` injectée, et le flag est apparu sur la page.
+
+**Payload utilisé :**
+`data:text/html;base64,PHNjcmlwdD5hbGVydCg0Mik8L3NjcmlwdD4=` (décodé : `<script>alert(42)</script>`)
+
+**Flag :** `928d819fc19405ae09921a2b71227bd9aba106f9d2d37ac412e9e5a750f1506d`
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **Éviter de réafficher les entrées utilisateur** : Ne pas réinjecter un paramètre contrôlé par l'utilisateur directement dans la page quand ça peut être évité.
+- **Sanitizer / Filtrer les entrées** : Quand la réinjection est nécessaire, filtrer les entrées contre les motifs dangereux (par exemple rejeter ou supprimer le schéma `data:`, `javascript:`, et tout schéma d'URI non http(s)), et utiliser une liste blanche de schémas/valeurs acceptés.
+- **Encoder la sortie** : Utiliser des fonctions d'échappement adaptées au contexte avant d'insérer une valeur dans un attribut HTML ou le contenu d'une balise.
+- **Content Security Policy (CSP)** : Restreindre les sources autorisées pour les frames/scripts afin de réduire l'impact d'un point d'injection restant.
+
+🔗 Sources
+
+- [OWASP - Reflected XSS](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting)
+- [MDN - data: URIs](https://developer.mozilla.org/en-US/docs/Web/URI/Schemes/data)

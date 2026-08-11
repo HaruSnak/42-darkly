@@ -1,0 +1,55 @@
+📖 Définition
+
+Le **Cross-Site Scripting stocké (persistant)** survient lorsqu'une entrée malveillante soumise par un utilisateur est enregistrée côté serveur (base de données, fichier, etc.) puis réaffichée à d'autres visiteurs sans être correctement nettoyée. Contrairement à la XSS réfléchie, le payload n'a pas besoin d'être dans l'URL — chaque visiteur qui consulte la page affectée exécute le script de l'attaquant.
+
+⚡ Démo rapide
+
+Aller sur `?page=feedback`, ouvrir la console DevTools (F12), lancer :
+```js
+document.querySelector('textarea[name="mtxtMessage"]').removeAttribute('maxlength')
+```
+Puis taper `<img src=x onload="alert('XSS')">` dans le champ Message et soumettre.
+
+📖 Approche
+
+La page `feedback` (`?page=feedback`) contient un formulaire avec les champs `Name` et `Message` ; les soumissions sont stockées et affichées sous le formulaire pour tout le monde.
+
+J'ai d'abord essayé d'injecter directement une balise `<script>alert(1)</script>` dans le champ message, mais le navigateur ne l'a pas exécutée — la liste des feedbacks ne s'affichait plus, ce qui suggère que la balise était filtrée ou cassait un mécanisme d'échappement qui ne s'applique pas à toutes les balises HTML.
+
+Les deux champs imposaient aussi une limite de caractères côté client (`maxlength="50"`), trop courte pour un payload fonctionnel. Avec les outils de développement, j'ai modifié directement l'attribut `maxlength` de la balise `<textarea>` :
+
+```html
+<!-- avant -->
+<textarea name="mtxtMessage" cols="50" rows="3" maxlength="50"></textarea>
+<!-- après -->
+<textarea name="mtxtMessage" cols="50" rows="3" maxlength="42424242"></textarea>
+```
+
+Une fois la limite de longueur supprimée, j'ai remplacé la balise `<script>` (filtrée) par un payload basé sur un gestionnaire d'évènement, via une balise `<img>` avec un `src` invalide pour déclencher le handler :
+
+```html
+<img src="fakeimage.jpg" onload="alert('Vous avez été piraté !')" />
+```
+
+J'ai soumis ce payload comme `Message` avec une valeur quelconque dans `Name`. Dès que la liste des feedbacks a réaffiché l'entrée stockée, le handler injecté s'est exécuté et le flag est apparu.
+
+**Payload utilisé :**
+`<img src="fakeimage.jpg" onload="alert('Vous avez été piraté !')" />` (soumis dans le champ `Message`, après suppression de la restriction `maxlength` côté client)
+
+**Flag :** `0fbb54bbf7d099713ca4be297e1bc7da0173d8b3c21c1811b916a3a86652724e`
+
+💥 Impact
+
+Une XSS stockée sur un mur de feedback public signifie que **chaque visiteur** qui charge la page — pas seulement l'attaquant — exécute le script injecté. Cela peut être utilisé pour voler des cookies de session, effectuer des actions au nom de n'importe quel utilisateur consultant la page (y compris un admin qui modère les feedbacks), rediriger les visiteurs vers des pages de phishing, ou défigurer/diffuser silencieusement un malware via le site. C'est plus grave qu'une XSS réfléchie car aucun lien piégé n'a besoin d'être cliqué — visiter la page suffit.
+
+🛡️ Remédiation
+
+Pour corriger cela :
+- **Validation côté serveur** : Ne jamais se fier à un `maxlength` côté client — appliquer aussi les limites de longueur et de caractères côté serveur.
+- **Encodage de sortie** : Encoder en HTML tout contenu soumis par l'utilisateur avant de le réafficher (convertir `<`, `>`, `"`, `'` en entités HTML), pour toutes les balises et attributs, pas seulement `<script>`.
+- **Sanitizer / retirer les attributs dangereux** : Si du HTML doit être autorisé, utiliser un sanitizer basé sur une liste blanche qui retire les attributs de gestion d'évènements (`onload`, `onerror`, `onclick`, ...) plutôt que de bloquer seulement certaines balises.
+- **Content Security Policy (CSP)** : Restreindre l'exécution de scripts/handlers inline pour réduire l'impact même si un payload passe au travers.
+
+🔗 Sources
+
+- [OWASP - Stored XSS](https://owasp.org/www-community/attacks/xss/)

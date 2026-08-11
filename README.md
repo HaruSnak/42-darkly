@@ -45,7 +45,8 @@ We successfully identified and documented **14 vulnerabilities** across the appl
    - *Union-Based SQLi (Images)*
    - *Union-Based SQLi (Users)*
 2. **Cross-Site Scripting (XSS)**
-   - *Reflected XSS (Redirection)*
+   - *Stored XSS (Feedback)*
+   - *Reflected XSS via data: URI (Nsa)*
 3. **Authentication & Session Management**
    - *Brute Force (Login)*
    - *Privilege Escalation (Cookie)*
@@ -53,11 +54,10 @@ We successfully identified and documented **14 vulnerabilities** across the appl
    - *Client-Side Security Bypass (Recover Password)*
    - *Client-Side Parameter Tampering (Survey)*
    - *HTTP Header Manipulation (Copyright)*
-   - *Insecure Logic Handling (Feedback)*
+   - *Open Redirect (Redirection Image)*
 5. **Sensitive Data Exposure**
    - *Robots.txt (Hidden Directory)*
    - *Robots.txt (Exposed Credentials)*
-   - *Local File Inclusion (LFI)*
    - *Path Traversal (etc/passwd)*
 6. **File Upload**
    - *Content-Type Spoofing (Upload)*
@@ -126,7 +126,8 @@ Nous avons identifié et documenté avec succès **14 vulnérabilités** sur l'a
    - *SQLi basée sur UNION (Images)*
    - *SQLi basée sur UNION (Utilisateurs)*
 2. **Cross-Site Scripting (XSS)**
-   - *XSS Réfléchi (Redirection)*
+   - *XSS Stockée (Feedback)*
+   - *XSS Réfléchie via URI data: (Nsa)*
 3. **Authentification & Gestion de Session**
    - *Brute Force (Login)*
    - *Escalade de Privilèges (Cookie)*
@@ -134,11 +135,10 @@ Nous avons identifié et documenté avec succès **14 vulnérabilités** sur l'a
    - *Contournement de Sécurité Client (Récupération de mot de passe)*
    - *Manipulation de Paramètres Client (Sondage)*
    - *Manipulation d'En-têtes HTTP (Copyright)*
-   - *Gestion Logique Non Sécurisée (Feedback)*
+   - *Open Redirect (Redirection Image)*
 5. **Exposition de Données Sensibles**
    - *Robots.txt (Répertoire Caché)*
    - *Robots.txt (Identifiants Exposés)*
-   - *Inclusion de Fichier Local (LFI)*
    - *Traversée de Répertoire (etc/passwd)*
 6. **Upload de Fichier**
    - *Usurpation de Content-Type (Upload)*

@@ -2,6 +2,14 @@
 
 L'**escalade de privilèges** est l'acte d'exploiter un bug ou une faille de conception pour obtenir un accès élevé à des ressources normalement protégées. En ce qui concerne les **cookies**, si une application fait confiance aux cookies stockés côté client pour définir les rôles (ex: `admin=true`) sans les vérifier côté serveur, un attaquant peut simplement modifier le cookie pour obtenir les privilèges d'administrateur.
 
+⚡ Démo rapide
+
+Ouvrir la console DevTools (F12) sur n'importe quelle page du site, lancer :
+```js
+document.cookie = "I_am_admin=b326b5062b2f0e69046810717534cb09; path=/"
+location.reload()
+```
+
 📖 Approche
 
 En inspectant le trafic réseau, j'ai remarqué un cookie nommé `I_am_admin`. Sa valeur était un hash MD5: `68934a3e9455fa72420237eb05902327`.
@@ -18,6 +26,10 @@ J'ai modifié la valeur du cookie dans mon navigateur par ce nouveau hash et j'a
 4. Remplacer la valeur du cookie et rafraîchir.
 
 **Flag :** `df2eb4ba34ed059a1e3e89ff4dfc13445f104a1a52295214def1c4fb1693a5c3`
+
+💥 Impact
+
+Comme le niveau de privilège est entièrement déterminé par une valeur contrôlée côté client et jamais vérifiée côté serveur, **n'importe quel visiteur peut s'auto-promouvoir administrateur** en quelques secondes, sans connaître le moindre mot de passe. Cela donne accès aux pages, données ou actions réservées à l'admin, et casse complètement le modèle d'authentification/autorisation de l'application. Sur un système réel, cela peut signifier une prise de contrôle totale de compte, l'accès aux données privées de tous les utilisateurs, ou la modification du contenu du site.
 
 🛡️ Remédiation
 

@@ -2,6 +2,15 @@
 
 L'**Injection SQL (SQLi)** est une technique d'injection de code où un attaquant peut exécuter des instructions SQL malveillantes qui contrôlent le serveur de base de données d'une application web. Cela permet d'accéder à des données sensibles, comme les détails des clients ou les mots de passe.
 
+⚡ Démo rapide
+
+Dans le champ de recherche "Members", coller dans l'ordre :
+```sql
+-1 UNION SELECT table_name, column_name FROM information_schema.columns
+-1 UNION SELECT Commentaire, countersign FROM users
+```
+Puis déchiffrer le MD5 trouvé (crackstation.net), le mettre en minuscule, et le hacher en SHA256.
+
 📖 Approche
 
 J'ai ciblé le formulaire "Members". Après avoir confirmé la faille avec `1 OR 1=1`, j'ai cartographié la base. J'ai identifié la table `users` (`0x7573657273` en hex).

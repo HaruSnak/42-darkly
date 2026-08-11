@@ -18,6 +18,15 @@ The **robots.txt** file is a standard used by websites to communicate with web c
 
 **Sensitive Information Disclosure** via `robots.txt` occurs when an administrator lists private or hidden directories in the `robots.txt` file to prevent search engines from indexing them. While this stops honest bots, it serves as a roadmap for attackers to find hidden content that might not be properly secured.
 
+### ⚡ Quick Demo
+
+```bash
+sed -i 's/X.X.X.X/<VM_IP>/' spider_darkly.py   # edit the target IP first
+pip install scrapy
+scrapy runspider spider_darkly.py -o output.json
+cat output.json
+```
+
 ### 📖 Approach
 
 I checked `http://X.X.X.X/robots.txt` and found a disallowed entry: `/.hidden`. Accessing this directory revealed a massive structure of nested subdirectories and files, making manual exploration impossible.
@@ -38,6 +47,10 @@ A script that follows links recursively and checks for the flag pattern in file 
 ]
 
 **Flag:** `d5eec3ec36cf80dce44a896f961c1831a05526ec215693c8f2c39543497d4466`
+
+### 🎯 Benefit
+
+Beyond the single flag, mapping the whole `.hidden` tree gives the attacker full visibility over content the administrator only tried to hide "by obscurity" instead of actually protecting it. This kind of reconnaissance regularly uncovers backup files, leftover debug scripts, or old versions of the application that were never meant to be public but are just as accessible as the flag once you know the path — turning a small crawl into a much wider information-disclosure surface.
 
 ### 🛡️ Remediation
 
@@ -65,6 +78,15 @@ Le fichier **robots.txt** est un standard utilisé par les sites web pour commun
 
 La **divulgation d'informations sensibles** via `robots.txt` se produit lorsqu'un administrateur liste des répertoires privés ou cachés dans le fichier `robots.txt` pour empêcher les moteurs de recherche de les indexer. Bien que cela arrête les robots honnêtes, cela sert de carte pour les attaquants afin de trouver du contenu caché qui pourrait ne pas être correctement sécurisé.
 
+### ⚡ Démo rapide
+
+```bash
+sed -i 's/X.X.X.X/<IP_VM>/' spider_darkly.py   # renseigner l'IP cible d'abord
+pip install scrapy
+scrapy runspider spider_darkly.py -o output.json
+cat output.json
+```
+
 ### 📖 Approche
 
 J'ai vérifié `http://X.X.X.X/robots.txt` et j'ai trouvé une entrée interdite : `/.hidden`. L'accès à ce répertoire a révélé une structure massive de sous-répertoires et de fichiers imbriqués, rendant l'exploration manuelle impossible.
@@ -84,7 +106,11 @@ Un script qui suit les liens récursivement et vérifie la présence du flag dan
 {"flag": "Hey, here is your flag : d5eec3ec36cf80dce44a896f961c1831a05526ec215693c8f2c39543497d4466", "url": "http://X.X.X.X/.hidden/whtccjokayshttvxycsvykxcfm/igeemtxnvexvxezqwntmzjltkt/lmpanswobhwcozdqixbowvbrhw/README"}
 ]
 
-**Flag:** `d5eec3ec36cf80dce44a896f961c1831a05526ec215693c8f2c39543497d4466`
+**Flag :** `d5eec3ec36cf80dce44a896f961c1831a05526ec215693c8f2c39543497d4466`
+
+### 🎯 Bénéfice
+
+Au-delà du simple flag, cartographier toute l'arborescence `.hidden` donne à l'attaquant une visibilité complète sur du contenu que l'administrateur a seulement tenté de cacher "par obscurité" plutôt que de réellement protéger. Ce type de reconnaissance révèle régulièrement des fichiers de sauvegarde, des scripts de debug oubliés, ou d'anciennes versions de l'application qui n'étaient pas censées être publiques mais restent tout aussi accessibles que le flag une fois le chemin connu — transformant un simple crawl en une surface bien plus large de divulgation d'informations.
 
 ### 🛡️ Remédiation
 

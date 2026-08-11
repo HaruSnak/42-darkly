@@ -2,6 +2,14 @@
 
 Le **contournement de sécurité client** (Client-Side Security Bypass) est une vulnérabilité où les contrôles de sécurité sont implémentés uniquement côté client (front-end), par exemple en HTML ou JavaScript. Comme le code côté client est entièrement contrôlable par l'utilisateur, ces contrôles peuvent être contournés trivialement en modifiant la source de la page ou en interceptant la requête.
 
+⚡ Démo rapide
+
+Aller sur `?page=recover`, ouvrir la console DevTools (F12), lancer :
+```js
+document.querySelector('input[type=hidden]').type = 'text'
+```
+Taper n'importe quelle valeur dans le champ devenu visible et soumettre.
+
 📖 Approche
 
 Pour cette faille, la page de récupération de mot de passe me semblait suspecte, avec seulement une image et un bouton. J'ai inspecté le code HTML de la page et j'ai remarqué que le formulaire contenait un champ `input` caché (`type="hidden"`).
@@ -25,4 +33,4 @@ Pour corriger cela :
 
 🔗 Sources
 
-- [OWASP - Client-Side Security](https://owasp.org/www-community/attacks/Client-side_Security_Bypass)
+- [OWASP - Web Parameter Tampering](https://owasp.org/www-community/attacks/Web_Parameter_Tampering)

@@ -2,6 +2,14 @@
 
 Le **Parameter Tampering** côté client est une forme de contournement où un attaquant modifie les paramètres envoyés par le client (navigateur) au serveur. Les applications supposent souvent que les utilisateurs ne peuvent soumettre que les valeurs fournies par l'interface visible (comme les menus déroulants), mais ces valeurs peuvent être facilement modifiées.
 
+⚡ Démo rapide
+
+Aller sur `?page=survey`, ouvrir la console DevTools (F12), lancer :
+```js
+document.querySelector('select').innerHTML += '<option value="999999999999">999999999999</option>'
+```
+Sélectionner la nouvelle option et soumettre.
+
 📖 Approche
 
 La page "Survey" permet de voter en choisissant une note dans une liste déroulante (`select`). Je me suis demandé ce qui se passerait si je modifiais la valeur envoyée. En utilisant les outils de développement (Inspecter), j'ai trouvé l'élément `<option>` correspondant à la note et j'ai modifié sa `value` (initialement "10") par un nombre beaucoup plus grand, "1000000000000000000".
@@ -15,6 +23,10 @@ En soumettant ce vote modifié, le site a accepté la valeur et m'a donné le fl
 4. Sélectionner cette option et voter.
 
 **Flag :** `03a944b434d5baff05f46c4bede5792551a2595574bcafc9a6e25f67c382ccaa`
+
+💥 Impact
+
+Comme la note n'est jamais validée côté serveur, un attaquant peut injecter des valeurs statistiquement impossibles (ici `10^18`), corrompant silencieusement l'intégrité des résultats du sondage. Au-delà d'une simple entrée aberrante, cela signifie que les statistiques agrégées, moyennes ou classements calculés à partir de ces données deviennent faussés ou entièrement contrôlables par l'attaquant — une entreprise s'appuyant sur ces chiffres (score de satisfaction client, notes de produits, classements publics) pourrait voir ses métriques manipulées à volonté, sans moyen de distinguer les votes légitimes des votes falsifiés.
 
 🛡️ Remédiation
 
